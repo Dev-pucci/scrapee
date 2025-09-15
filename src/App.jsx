@@ -167,6 +167,18 @@ const StatsExplorer = () => {
     );
 
     const SpidersJobsExplorer = () => {
+        const [spiderStats, setSpiderStats] = useState({
+            runTime: '-',
+            pages: 0,
+            missedPages: 0,
+            items: 0,
+            coverage: '0%',
+            successRate: '0%',
+            checks: '0/0',
+            warnings: 0,
+            errors: 0
+        });
+        const [spiderTableData, setSpiderTableData] = useState([]);
         const spiderTableHeaders = ["Job/Spider", "Time", "Status", "Runtime", "Pages", "Items", "Checks", "Errors"];
         return (
             <div className="p-4 flex-1">
@@ -190,16 +202,16 @@ const StatsExplorer = () => {
                 </div>
                 
                 <div className="mt-4 flex flex-wrap justify-between items-center gap-4 text-xs">
-                    <StatPill title="Run Time" value="-" color="bg-gray-300" />
-                    <StatPill title="Pages" value="0" color="bg-gray-300" />
-                    <StatPill title="Missed Pages" value="0" color="bg-green-500" />
-                    <StatPill title="Items" value="0" color="bg-gray-300" />
-                    <StatPill title="Coverage" value="0%" color="bg-gray-300" />
-                    <StatPill title="Success Rate" value="0%" color="bg-gray-300" />
-                    <StatPill title="Checks" value="0/0" color="bg-green-500" />
+                    <StatPill title="Run Time" value={spiderStats.runTime} color="bg-gray-300" />
+                    <StatPill title="Pages" value={spiderStats.pages} color="bg-gray-300" />
+                    <StatPill title="Missed Pages" value={spiderStats.missedPages} color="bg-green-500" />
+                    <StatPill title="Items" value={spiderStats.items} color="bg-gray-300" />
+                    <StatPill title="Coverage" value={spiderStats.coverage} color="bg-gray-300" />
+                    <StatPill title="Success Rate" value={spiderStats.successRate} color="bg-gray-300" />
+                    <StatPill title="Checks" value={spiderStats.checks} color="bg-green-500" />
                      <div className="flex items-center gap-4">
-                        <span className="text-green-600 font-semibold">0 Warnings</span>
-                        <span className="text-green-600 font-semibold">0 Errors</span>
+                        <span className="text-green-600 font-semibold">{spiderStats.warnings} Warnings</span>
+                        <span className="text-green-600 font-semibold">{spiderStats.errors} Errors</span>
                     </div>
                 </div>
 
@@ -211,11 +223,21 @@ const StatsExplorer = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colSpan={spiderTableHeaders.length} className="text-center py-16 text-gray-500">
-                                    No job data available.
-                                </td>
-                            </tr>
+                            {spiderTableData.length === 0 ? (
+                                <tr>
+                                    <td colSpan={spiderTableHeaders.length} className="text-center py-16 text-gray-500">
+                                        No job data available.
+                                    </td>
+                                </tr>
+                            ) : (
+                                spiderTableData.map((row, index) => (
+                                    <tr key={index}>
+                                        {spiderTableHeaders.map((header, idx) => (
+                                            <td key={idx} className="px-4 py-3">{row[header] || '-'}</td>
+                                        ))}
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -224,10 +246,19 @@ const StatsExplorer = () => {
     };
 
     const OverallExplorer = () => {
-        const explorerData = [
-            { day: 'Today', numJobs: 5, running: 2, finished: 3, runtime: '3m 45s', pages: 1204, missedPages: 2, items: 3612, coverage: '100%', warnings: 1, warningEvents: 1, errors: 0, errorEvents: 0, checks: '5/5' },
-            { day: 'Yesterday', numJobs: 8, running: 0, finished: 8, runtime: '8m 12s', pages: 2500, missedPages: 15, items: 7500, coverage: '99.4%', warnings: 3, warningEvents: 5, errors: 1, errorEvents: 1, checks: '8/8' },
-        ];
+        const [overallStats, setOverallStats] = useState({
+            numJobs: 0,
+            runTime: '-',
+            pages: 0,
+            missedPages: 0,
+            items: 0,
+            coverage: '0%',
+            successRate: '0%',
+            checks: '0/0',
+            warnings: 0,
+            errors: 0
+        });
+        const explorerData = [];
         const explorerHeaders = ['Day', 'Num Jobs', 'Running', 'Finished', 'Runtime', 'Pages', 'Missed Pages', 'Items', 'Coverage', 'Warnings', 'Warning Events', 'Errors', 'Error Events', 'Checks'];
 
         return (
@@ -237,32 +268,38 @@ const StatsExplorer = () => {
                    <p className="text-gray-400 text-sm">Chart placeholder</p>
                 </div>
                 <div className="mt-4 flex flex-wrap justify-between items-center gap-4 text-xs">
-                    <StatPill title="Num Jobs" value="0" color="bg-blue-500" />
-                    <StatPill title="Run Time" value="-" color="bg-gray-300" />
-                    <StatPill title="Pages" value="0" color="bg-gray-300" />
-                    <StatPill title="Missed Pages" value="0" color="bg-green-500" />
-                    <StatPill title="Items" value="0" color="bg-gray-300" />
-                    <StatPill title="Coverage" value="0%" color="bg-gray-300" />
-                    <StatPill title="Success Rate" value="0%" color="bg-gray-300" />
-                    <StatPill title="Checks" value="0/0" color="bg-green-500" />
+                    <StatPill title="Num Jobs" value={overallStats.numJobs} color="bg-blue-500" />
+                    <StatPill title="Run Time" value={overallStats.runTime} color="bg-gray-300" />
+                    <StatPill title="Pages" value={overallStats.pages} color="bg-gray-300" />
+                    <StatPill title="Missed Pages" value={overallStats.missedPages} color="bg-green-500" />
+                    <StatPill title="Items" value={overallStats.items} color="bg-gray-300" />
+                    <StatPill title="Coverage" value={overallStats.coverage} color="bg-gray-300" />
+                    <StatPill title="Success Rate" value={overallStats.successRate} color="bg-gray-300" />
+                    <StatPill title="Checks" value={overallStats.checks} color="bg-green-500" />
                     <div className="flex items-center gap-4">
-                        <span className="text-green-600 font-semibold">0 Warnings</span>
-                        <span className="text-green-600 font-semibold">0 Errors</span>
+                        <span className="text-green-600 font-semibold">{overallStats.warnings} Warnings</span>
+                        <span className="text-green-600 font-semibold">{overallStats.errors} Errors</span>
                     </div>
                 </div>
                 <div className="mt-4 overflow-x-auto">
                     <div className="grid gap-y-2" style={{ gridTemplateColumns: `repeat(${explorerHeaders.length}, minmax(100px, 1fr))` }}>
                         {explorerHeaders.map(h => <div key={h} className="text-xs text-gray-500 font-semibold uppercase py-2">{h}</div>)}
-                        {explorerData.map((row, rowIndex) => (
-                            <React.Fragment key={rowIndex}>
-                                {Object.entries(row).map(([key, value]) => (
-                                    <div key={`${rowIndex}-${key}`} className={`text-sm py-2 border-t border-gray-200 ${
-                                        (key === 'warnings' && value > 0) ? 'text-orange-500' : 
-                                        (key === 'errors' && value > 0) ? 'text-red-500' : 'text-gray-800'
-                                    }`}>{value}</div>
-                                ))}
-                            </React.Fragment>
-                        ))}
+                        {explorerData.length === 0 ? (
+                            <div className="col-span-full text-center py-8 text-gray-500">
+                                No data available.
+                            </div>
+                        ) : (
+                            explorerData.map((row, rowIndex) => (
+                                <React.Fragment key={rowIndex}>
+                                    {Object.entries(row).map(([key, value]) => (
+                                        <div key={`${rowIndex}-${key}`} className={`text-sm py-2 border-t border-gray-200 ${
+                                            (key === 'warnings' && value > 0) ? 'text-orange-500' : 
+                                            (key === 'errors' && value > 0) ? 'text-red-500' : 'text-gray-800'
+                                        }`}>{value}</div>
+                                    ))}
+                                </React.Fragment>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
@@ -289,6 +326,14 @@ const StatsExplorer = () => {
 };
 
 const DashboardPage = () => {
+    const [dashboardStats, setDashboardStats] = useState({
+        activeJobs: 0,
+        scheduledJobs: 0,
+        completedJobs: 0,
+        unhealthyJobs: 0
+    });
+    const [dashboardScheduledJobs, setDashboardScheduledJobs] = useState([]);
+
     return (
         <div>
             <div className="flex justify-between items-center">
@@ -296,10 +341,10 @@ const DashboardPage = () => {
                 <span className="text-sm text-gray-500">0 Servers</span>
             </div>
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard title="Active Jobs" value="0" period="Live" />
-                <StatCard title="Scheduled Jobs" value="0" period="Next 24 hours" />
-                <StatCard title="Completed Jobs" value="0" period="Today" />
-                <StatCard title="Unhealthy Jobs" value="0" period="Today" unhealthy />
+                <StatCard title="Active Jobs" value={dashboardStats.activeJobs} period="Live" />
+                <StatCard title="Scheduled Jobs" value={dashboardStats.scheduledJobs} period="Next 24 hours" />
+                <StatCard title="Completed Jobs" value={dashboardStats.completedJobs} period="Today" />
+                <StatCard title="Unhealthy Jobs" value={dashboardStats.unhealthyJobs} period="Today" unhealthy />
             </div>
             <StatsExplorer />
              <div className="mt-6 bg-white rounded-lg border border-gray-200">
@@ -315,9 +360,19 @@ const DashboardPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                           <td colSpan={3} className="text-center py-8 text-gray-500">No scheduled jobs.</td>
-                        </tr>
+                        {dashboardScheduledJobs.length === 0 ? (
+                            <tr>
+                                <td colSpan={3} className="text-center py-8 text-gray-500">No scheduled jobs.</td>
+                            </tr>
+                        ) : (
+                            dashboardScheduledJobs.map((job, index) => (
+                                <tr key={index}>
+                                    <td className="px-6 py-3">{job['Job/Spider'] || '-'}</td>
+                                    <td className="px-6 py-3">{job['Frequency'] || '-'}</td>
+                                    <td className="px-6 py-3">{job['Next Run'] || '-'}</td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
              </div>
@@ -326,6 +381,7 @@ const DashboardPage = () => {
 };
 
 const JobManagerPage = () => {
+    const [jobData, setJobData] = useState([]);
     const tableHeaders = ["Job/Spider", "Time", "Status", "Runtime", "Pages", "Items", "Coverage", "Checks", "Errors"];
 
     return (
@@ -362,11 +418,21 @@ const JobManagerPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colSpan={tableHeaders.length} className="text-center py-16 text-gray-500">
-                                No job data available.
-                            </td>
-                        </tr>
+                        {jobData.length === 0 ? (
+                            <tr>
+                                <td colSpan={tableHeaders.length} className="text-center py-16 text-gray-500">
+                                    No job data available.
+                                </td>
+                            </tr>
+                        ) : (
+                            jobData.map((job, index) => (
+                                <tr key={index}>
+                                    {tableHeaders.map((header, idx) => (
+                                        <td key={idx} className="px-6 py-3">{job[header] || '-'}</td>
+                                    ))}
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -375,6 +441,7 @@ const JobManagerPage = () => {
 };
 
 const JobSchedulerPage = () => {
+    const [scheduledJobs, setScheduledJobs] = useState([]);
     const tableHeaders = ["Enabled", "Job/Spider", "Server", "Status", "Cron", "Frequency (UTC)", "Last Run", "Next Run", "Action"];
 
     return (
@@ -400,11 +467,21 @@ const JobSchedulerPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colSpan={tableHeaders.length} className="text-center py-16 text-gray-500">
-                                No scheduled jobs found.
-                            </td>
-                        </tr>
+                        {scheduledJobs.length === 0 ? (
+                            <tr>
+                                <td colSpan={tableHeaders.length} className="text-center py-16 text-gray-500">
+                                    No scheduled jobs found.
+                                </td>
+                            </tr>
+                        ) : (
+                            scheduledJobs.map((job, index) => (
+                                <tr key={index}>
+                                    {tableHeaders.map((header, idx) => (
+                                        <td key={idx} className="px-6 py-3">{job[header] || '-'}</td>
+                                    ))}
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -413,44 +490,9 @@ const JobSchedulerPage = () => {
 };
 
 const WorkersPage = () => {
-    const [workers, setWorkers] = useState([
-        {
-            id: 'kilimall',
-            name: 'Kilimall Scraper',
-            description: 'Extract products from Kilimall Kenya',
-            icon: '🛒',
-            status: 'online',
-            port: 5001,
-            stats: {
-                totalTasks: 127,
-                completedTasks: 124,
-                successRate: 97.6,
-                totalProducts: 15420,
-                activeTasks: 2
-            }
-        },
-        {
-            id: 'jumia',
-            name: 'Jumia Scraper',
-            description: 'Extract products from Jumia Kenya',
-            icon: '🛍️',
-            status: 'online',
-            port: 5000,
-            stats: {
-                totalTasks: 89,
-                completedTasks: 86,
-                successRate: 96.6,
-                totalProducts: 12150,
-                activeTasks: 1
-            }
-        }
-    ]);
+    const [workers, setWorkers] = useState([]);
 
-    const [activeTasks, setActiveTasks] = useState([
-        { id: '1', worker: 'kilimall', query: 'smartphone', progress: 65, status: 'running' },
-        { id: '2', worker: 'kilimall', query: 'laptop', progress: 30, status: 'running' },
-        { id: '3', worker: 'jumia', query: 'headphones', progress: 85, status: 'running' }
-    ]);
+    const [activeTasks, setActiveTasks] = useState([]);
 
     const WorkerCard = ({ worker }) => (
         <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
